@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: Using ML to win FPL
 subtitle: This post will walk you through how you can use Analytics & ML to remove human bias and make data driven decisions to improve your performance at FPL.
