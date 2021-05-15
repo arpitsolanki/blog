@@ -1,11 +1,9 @@
-﻿---
+---
 layout: post
 title: Building a model to predict IPL match outcomes
 subtitle: This post will walk you through how you can use Analytics & ML to predict winners of IPL matches.
 tags: [python,Streamlit,IPL]
 ---
-
-# Building a simple model to predict IPL Match Outcomes
 
 #### App Link with final predictions - https://share.streamlit.io/arpitsolanki/ipl-prediction-engine/main/app.py
 
@@ -95,9 +93,9 @@ Current season form is the most important feature, followed by difference in num
 
 We also tested out the model for different seasons, looking to get an understanding of the average accuracy of the model over multiple seasons. As mentioned above, for making predictions for a season, we train the model with data up until the last season and make predictions on the current season. Using this method the general accuracy of the model lies in the range of 65%-70%, though it fell down to 61% for the 2018 season. 
 
-Generally you would expect model to get better with every passing year due to availability of more data, but that isn't the case with IPL due to the reasons mentioned earlier -complete changes in squads due to mega auctions, tournament shifting to neutral venues etc.
+![enter image description here](https://lh3.googleusercontent.com/U33_YiR3E-jTBtTyLR4ptNgB26d-Cs_LwaWfXsFkXIS7IzDDbEoR4BanEtbvaSphtW3bBQEymgib0uqMcQw-cAua9f3XGsclR5xFiCv9vxDkzC8cI-Kwg-ZaLADghDJisNn10hexNzDw_tPihYGBCrrkNYDOppi3rn3s8cvOVoOXJTycdxG9PMZPH_Kkioe4HagpaKOIm6uqy7uurp31dZ2VzCZ35920Nfflqc-pzyKWaaxwtFIwZcwYGo6StPHrQxdpsttlRJcbr4Cfsa4P1O7wfxVXcx5pp_3b7o9qVORXZt1F1dCLD5iHP9-OfLop0F7YrzjIh_TfA_mBE4zfaLd2WRD8lOFQObT6ZyWssMouGnYeVJ_mRMaPSjqVXOLjRmIegmh7JeG5rHZu7RqQ9EcsUdujD_30GuMNQg8ooyhIpZ1SAofJRW2WaeU2dFXt6MK00XVYjrexwPYWV9qSgSIWxQfPGObuY5Nc24gBTE4c88gzXAvT2ZTqV9_UxnJmf10ksQUJ6_3TNqmWsmQ7yk004XBtsUVIL3pUBtCVWS1um6zykwRlw22rICxA6iiQxINPth3-VlcRfqWQI-x1VBoTokJlUKf40S0HW7kyOzNj7D24qE1CNsi1Z4Uqa20bSEwWwB_h5qzGIu7An3eI3NtUUbWSitUQn86eVTUzuTffTaapDYjM_FlCL_pxFo5CzMPi4HhaYd6l0YgMLHYyNJo=w1158-h525-no?authuser=0)
 
-![enter image description here](https://lh3.googleusercontent.com/OuR4u9M83eWzDa42VtKYL4WR7yHxmkVDxOcEUQCO9SNwSX3lg-JpeKZ8Qg1k0dcINdBhIy-0AB93kMyjpiYE2BHEQkown4o96d7hUrWzJ13UUvB4Phsi03BarPiXKCO1603A00gw9BIELE745RzcD7Dm1o9Ntu5RNlPq_RGtRtHuyG78xguQWd6CyeiT_QJz73Q_PTA7RmbCugp1b7bD5Qdqb-M3XLscowECp2zeaJG4om-c1zbpckE2Fgh6XZlT2rVOoRDB_NmP5fiI5t-yAZFBrlwKJYIpWvV0E86UExctdXv3g2LAykfoHYNhhNg3EZJXnZ731kOJUUvBBq4un9E9Jeu5ik04lUbKS2aVGGMgFf6obahng2wqBtSWX559yUxZ5gTT1ns_zvvD6C1jaiu-cvrq85bg2Lw2CRhttkgifAuE5Wc4MvjUUOPnWFSbGSTpYk0gU_b4cXlp6xoyShzaWQd7Zgci5MfdrBNHAjuzjSW3GkWBaTdZAPaRc7gJYalpQD1NjB8dMbLtcMRKMXjX5fQObZCw0D7ExJzSwMjjHHZF46h6dmrMj4M-j211800arcw6Mkt8BoMmQX-FoifARojMWlWutzNOLATpwkq9HQ5o0C-XwPCHPxu4_ALg163CbqMayquFIEguK0t-t264P0_z3gSEJahJxFQQ2_b43SEQiRwjxbTDCuTDTM3JgK3DXHynRJdHo55iW6JgVII=w485-h220-no?authuser=0)
+Generally you would expect model to get better with every passing year due to availability of more data, but that isn't the case with IPL due to the reasons mentioned earlier -complete changes in squads due to mega auctions, tournament shifting to neutral venues etc.
 
 ## Alternative approaches
 While this model gives us reasonable accuracy, there is still a lot of scope for improvement. We did not consider toss outcomes, match importance for teams, day/night status and squad strength based on players involved in the match during our prediction. Adding these & other features could potentially improve the model accuracy.
