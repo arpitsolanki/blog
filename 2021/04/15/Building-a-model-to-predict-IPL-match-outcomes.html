@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Building a model to predict IPL match outcomes | Random Forest</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Building a model to predict IPL match outcomes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Building a simple model to predict IPL Match Outcomes" />
+<meta property="og:description" content="Building a simple model to predict IPL Match Outcomes" />
+<link rel="canonical" href="https://arpitsolanki.github.io/blog/2021/04/15/Building-a-model-to-predict-IPL-match-outcomes.html" />
+<meta property="og:url" content="https://arpitsolanki.github.io/blog/2021/04/15/Building-a-model-to-predict-IPL-match-outcomes.html" />
+<meta property="og:site_name" content="Random Forest" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-04-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"Building a simple model to predict IPL Match Outcomes","url":"https://arpitsolanki.github.io/blog/2021/04/15/Building-a-model-to-predict-IPL-match-outcomes.html","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://arpitsolanki.github.io/blog/2021/04/15/Building-a-model-to-predict-IPL-match-outcomes.html"},"headline":"Building a model to predict IPL match outcomes","dateModified":"2021-04-15T00:00:00-05:00","datePublished":"2021-04-15T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://arpitsolanki.github.io/blog/feed.xml" title="Random Forest" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Random Forest</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Building a model to predict IPL match outcomes</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-04-15T00:00:00-05:00" itemprop="datePublished">
+        Apr 15, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      11 min read
+    
+</span></p>
+
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="building-a-simple-model-to-predict-ipl-match-outcomes">Building a simple model to predict IPL Match Outcomes</h1>
+
+<h4 id="app-link-with-final-predictions---httpssharestreamlitioarpitsolankiipl-prediction-enginemainapppy">App Link with final predictions - https://share.streamlit.io/arpitsolanki/ipl-prediction-engine/main/app.py</h4>
+
+<h4 id="code--httpsgithubcomarpitsolankiipl-prediction-engine">Code -https://github.com/arpitsolanki/IPL-Prediction-Engine</h4>
+
+<h2 id="background">Background</h2>
+<p>Over the last few months I’ve been trying to combine my two passions - sports &amp; data analytics. It all started with using <a href="https://arpitsolanki.github.io/blog/2021/02/06/Using-ML-to-win-FPL.html">analytics to get better at Fantasy League for Football</a>, I also recently participated in annual Kaggle competition for predicting outcomes of NCAA matches. While I enjoyed both those projects, I found that my lack of knowledge for Football &amp; Basketball limited my abilities to come up with good features &amp; models to some extent. Therefore I decided to pick up Cricket, a sport which I understand really well and have been following for a long time.</p>
+
+<p>Cricket traditionally isn’t a sport which has been known for widespread usage of data to inform tactics &amp; team selection, at least not to the extent of some other sports like Baseball &amp; Football. However with the growing popularity of T20 over the last 10 years, things have been changing very rapidly in Cricket as well, with teams employing performance analysts &amp; using data to get any possible edge over the opposition. This has spilled over to cricket broadcasts &amp; journalism as well, with commentators trying to bring in more visualizations &amp; journalists using data to create stories around their articles. A great example of this is Jarrod Kimber, who uses a lot of analytics in his video blogs to deep dive into matches &amp; explain why teams performed in a certain manner. I’d been watching all of this very closely over the years &amp; decided to get my hands dirty &amp; combine my love for the sport of cricket and my skills as a data analyst to create a project around predicting match outcomes for IPL matches using data analytics.</p>
+
+<h3 id="why-ipl-is-a-difficult-tournament-to-predict-accurately">Why IPL is a difficult tournament to predict accurately?</h3>
+<p>I did check out a few solutions available on the internet predicting match outcomes, but they all had low accuracy scores, sometimes worse than a coin toss. I think this could be due to the following reasons -</p>
+<ol>
+  <li>Upsets are more likely in T20 than any other cricket format. In cricket or any other sport, the longer the match goes, the stronger team has much higher chance of overcoming poor passages of play and win the game, but since T20 cricket is just 120 balls per innings, few moments of individual brilliances can change outcomes of games.</li>
+  <li>IPL teams have a fixed purse amount to spend on players, which ensures a level playing field. The difference in quality in best &amp; worst teams isn’t as high as in some other sports like EPL, NBA etc.</li>
+  <li>The format for tournament isn’t consistent - squads get changed every few years, gets played outside India every now and then, teams keep getting added or banned. This makes it difficult to get high volume of high quality data &amp; there’s too much noise added due to above factors</li>
+  <li>As I mentioned earlier, except for a few there aren’t many teams which have consistently dominated the IPL over a long time. A team having a good season can suddenly become poor the next season. 
+<img src="https://lh3.googleusercontent.com/RWTBDACkQohzdiBPQYuyvAZoog8-s67wQEbAtOzgcSyqZ9CrX3z2PKd6vRhjUwM0XumurRtqNMw0P419SN6EXEfkn-SAlpKd4QgTqGIs9cMqfEXKHX9CJ-CgcnxPElsOqFPaCfxzy9P47OcUvZ5CkSglftsBaqqobGNk1BwGb6Rgrxqv8gL6b6bFBP-p_UO1_MAAwTw0RYC_hBkbjfiDF8KL8D6V19VMmvZxvPW4Gzwy2TI94X4Wrf9XEsp_J7eDMA5nh-iDXuwTwZckJF3FN-xuIiSnRlGXiYoPOWp7ky89Z6bwNeNHa5ai4lfrHVA9tchE9n7DSe3eEqyVIFF1LjL6GnV89r-wGQYrBGpJJNdvsfKHlWEAMg0AW-B8fh6tAovgAFeNdVQy1nlcw3RkLiPYIvDonBKhsn3VQ-Mth_KMTqMFcxl7RfNaAw2TehZZkMCVAZ4M4XwsTwpe3wZqjvDXEz_PEa_JsmwyFQWxCwew82XzceMQ-MuI1weluEiPlTiayfyebE6ESdeOk3Bhuto1EnwpwsjGfZ33zL2AcWzEftHdQTvkitEoRZpxX96Mu3uD0Smt_tKQLJQvWeIvawycGG5cy8jdwmcIKljcAj1dNPvwAfnKrOYpu4EOe8dTDkt456I3ugyX-RZl45qJS9ntQWTrWNBoay9jnzKFixEX46J9Jf6ldar9agZRMKd3h5IAGtFB6AVy8-o7wpN8EXQ=w1141-h525-no?authuser=0" alt="enter image description here" />
+The above chart shows the percentage of matches won by IPL teams over different seasons. There aren’t too many relatively straight lines in the chart above - win rates for teams wildly fluctuates from one season to the other. There are two teams which have had longer successful spells - Mumbai Indians &amp; Chennai Super Kings, but even they’ve had poor run of seasons every now and then.</li>
+</ol>
+
+<h2 id="gathering-data">Gathering Data</h2>
+<p>I had initially thought that getting access to good quality data for IPL matches would be a challenge, but a few google searches helped me discover <a href="cricsheet.org">cricsheet.org</a> - absolute gem of a website when it comes to cricket data. It tracks data for all major domestic &amp; international competitions going back several years. The dataset available for IPL is fairly granular - ball by ball data for all the IPL matches that have happened so far. This is how the data looks like -</p>
+
+<p>enter image description here
+<img src="https://lh3.googleusercontent.com/v_7vpLk4920gPOixZF46E2ojM1Wy31apIWmtHFHjcMD3uyzzjUJGiI9CRsH-X5cQ_kx3Z11Y8Ka5EyfluTPzRQmgdmv-TP8ZEKo6RFi3H8kHyz4No8Jlqv9zgXlP-coa4bkwuu5Rnw0z-zXTKE8ywQIx21LZQ3WS1LtCWyN50Mwdbrh7NAi8kc0uIYpmhdHbodNJLrDqxiH2dfOeMPcJ1JyT5SCRLJbeWU5zSmzvkLuwmUrh2zspAaOiWUCru0MtBDjjozdPSiDITyWwIbMrOeiLmEKvZP3u-mi2VqKLW3zi0WB3H0ngEGIzOb4PXO9MWhy8j9-WVqjvwZeDTDOFtVkXwcl_8mbul83hhKlHd6N7XCrK8FVz5d6q_f5HVs3kJNdbOgbSGCYAa_IGHWbTtJ_xpD7NdbIZqNIqLCBYxAMdNB-gbju9tE-Ji4NouQi7nbMJ-LomJ2xsxZRipRuBFQ__xvI26YnL4vRwm8XYI9zoXxZFiCjnvpDsINqoMlFz-xMJHEhudHLGfZ80O_P82B3zwrkIyAyfNZJP3MyfMuPYr5g6qHKf_EHRBb5dYFjBLW-JPzJWpAqp-N4LsujA0qdzcL40-3rB-1OJX4UAId3ts9pi0LRSxGq6yBta58jrOj8LBCNhzHIuT3nTl059Zvhgd5aqYnVaHzxQJ8B4u7ubisPrU6AlnekbicnILSKfpnOPGqkkCIjKoHAvwYYGT44=w981-h179-no?authuser=0" alt="enter image description here" /></p>
+
+<p>The data is available for all the matches, tracking information around venue, batsman, bowler, extras, dismissals etc. However, it does require some amount of cleaning &amp; wrangling to get it into a format ready for making predictions.</p>
+
+<h2 id="data-preparation">Data Preparation</h2>
+<p>Although the data is available in a reasonably clean format, there are still some operations that need to be performed to get the data in a desired format -</p>
+<ol>
+  <li>Ensure team &amp; stadium across season are consistent. For ex. Hyderabad team shows up as Deccan Chargers, Sunrisers Hyderabad across multiple seasons. Ensuring that such instances are treated as same across seasons</li>
+  <li>Roll-up the ball level data to match by match data, with clear winner being identified for each match.</li>
+</ol>
+
+<h2 id="feature-engineering">Feature Engineering</h2>
+<p>As with any modelling problem, domain knowledge is very important to come up with good features relevant to the problem statement. Very often the quality of data is just as important as the choice of the model for making predictions. Based on my experience of watching cricket broadcasts over the years, I came up with a list of factors which I think play a role in determining match outcomes. Exploratory analysis of data on these factors along with several iterations during the model building stage will help us select the optimal set of features which maximizes prediction accuracy. Here are the categories of features I came up with intuitively -</p>
+
+<p><strong>Venue Stats</strong></p>
+<ol>
+  <li>Home/Away fixture - Unlike football &amp; some other sports, pitch conditions play a huge role in determining the outcome of the match. Teams create squads to suit their home ground pitch conditions - for ex. Chennai going spin heavy to suit spinning pitches at Chepauk.</li>
+  <li>Venue Win Rates - As some seasons are played at neutral venues, its good to keep a track of a team’s performance at every individual venue</li>
+</ol>
+
+<p><strong>Runs &amp; Wicket Stats</strong></p>
+<ol>
+  <li>Powerplay Batting &amp; Bowling Stats - Number of wickets &amp; runs scored on average while batting &amp; bowling during powerplay</li>
+  <li>Innings Batting &amp; Bowling Stats - Number of wickets taken &amp; runs scored on average while batting &amp; bowling during the entire innings</li>
+</ol>
+
+<p><strong>Win Rate Stats</strong></p>
+<ol>
+  <li>Team Overall Win Rates - Even though we saw that a team’s win rate in a season can fluctuate a lot over multiple seasons, its still a good metric to separate the likes of MI &amp; CSK</li>
+  <li>Head2Head - Head to head records of teams against each other</li>
+  <li>Season Performance Stats - Team’s position on points table &amp; number of matches won in a season is a good indicator of recent form and could be useful for predicting the winner. For ex. you would expect a team at the top of the table to beat the team at the bottom of the table most times during a season.</li>
+</ol>
+
+<p>Let’s start diving deep into some of these feature groups and look at which ones correlate with a team’s win rate.</p>
+
+<p><strong>Venue Stats</strong></p>
+
+<p><img src="https://lh3.googleusercontent.com/mxCv6Xwx3YCiwhWgYoRX6Lh92Qmr83my6Rc7AyU-Ci_TLtnxOcQQ1DljWUtt92bw600uN2fmJ2Z5z31nZh1VocetJGjv8wx0IvfQf-xvHOwcAl9sEhBSxNb_7prRQsjcgBuKxhLzgT2_4YJKCwBk_qDo3vBEdruEnX0gZswE2_b828EMJ4RmRQkEdw49n7RzQKG8C57YaIAev7AWh6GoKpdNkTZQdWWQo8_PUJ4JSBy5CDT4h7455VvCv9HHYc_VUpON-yYS2iXwOpZg1uDuG1tOCHUiHfpYy5-D29VNoXLey0sKHVbifMdWikErAut7NhlXq6ZfN3t_9VHnUasNWtWg_WDgFb8m4la0c9AnqE_XpyYlM_9dbI576I-Ql38ySpcEd9IdZ6cmvvO74RJWuyfntxfMdYudoM31M1eIkpyTyPr0RqD2lTfhfpTHZXk0fmwz8baa3Prq1XG2nhtTy5iGqo7aMHKEwZpvNs37HN6Br8KNThQmpSK5hMcBaYh9Wh5Lg_ELjPa39UOpfzbl3QoR9wYBP8NL5rcUzHlo91y0UAcdyVHNYBMZLnwgpCBug911HDIPyoSMJSzzmt4uQ2a6pcOrjxDe_ehzRs4VWlfEJ5qRRmGBhauCWia6WkImSJZwQdaRY47HmmhiWygP9gPVzBtDkPdPK2N6XewltLFxz3SWEiqJNiMKpEfro_r-HE36YuWjlSrIZ2f6hIp4UW0=w1158-h525-no?authuser=0" alt="enter image description here" /></p>
+
+<p>As you can see above, most teams seem to do well in their home conditions compared to away grounds. Teams play at least half of their matches at their home ground every season. Pitch characteristics &amp; ground sizes vary a lot across India, with some pitches like Chennai being spin bowler friendly while others like Bangalore being a batting paradise. Teams therefore build their squad to best suit their home ground conditions which gives them an advantage over visiting teams. Also home support is a big factor as all IPL games are well attended and fan bases are quite strong.</p>
+
+<p>Rajasthan &amp; Chennai both win almost 70% of their matches on their home grounds. No team other than Mumbai &amp; Chennai has a win_rate of more than 50% on away grounds. This versatility across conditions is probably the reason why both Mumbai &amp; Chennai are the strongest teams in the IPL. Let’s also look at distribution of win rates across different grounds to see how much an individual team’s performance varies across grounds -</p>
+
+<p><img src="https://lh3.googleusercontent.com/iqNIroEuKt8ywcFBvKN28EX6wXjXk7MWLICOBXJoGlU8CRYrZdgtbfAgGVcVPXWDYrY9v08u8QLLBt0YQrkwJ4kEiyoZ0mL96ZzuCp8fNj6fVSsbn12iScoS6C9_mTMKMy9ZkYmi8P9hzKCwtCl5pVFY-HKHqtXIKbofHD-68mISue0VOhWD5s7VEYBkhNC6_QolaPaxrWnLpmvI8w-XIkQFTuz9Yew1_E4LzgjLBg7OoanFQZfvZgpyF_7Tu7e_rNfUdz0-FxBrF8B9I_5ISX5uP97wuQoyqXVyf79rdBcM8MLW_BEZtF5VndIEKtJY9NzM-B63zLohPC3tFsAhx99U9u5SlaTrJQ6rZUChXPqE3tsykfJuIXI7VcbPzL9WloE5igkuPEsemIy3NjsXdYJONM_IrBZ_eUogzILg5uGAADNt4YjxjxdaA3B0hMJqgQ7s8nSpVZXm8AMKuO9Fkt-_Fq9GsUMuEZ25ytPQ6L3Z00hDrdJeHTEsxBb9ceReyUmGE6GiC24XukS4Lnkvp-qVH-dk5dr5GuRiPmIUHQiag11_7nuSD64TFFCDjovSa3hFzpZJH6BdZxzOftB2q4K2cJvwGxcVj01pjW22W4nd3HZkq8wkr_GyP9wX9xUMAxLsS1s9aI0JQ7dWlbTf-og0i6R1lFan6ppWmvzIhWe6LNlaTJpnLhd_X005BZoJlYb2QmbJ6mHQIHCPRTUlHpE=w1158-h525-no?authuser=0" alt="enter image description here" /></p>
+
+<p>As you can see in the chart above, team’s win rate at different venues fluctuates quite a bit. The violins above show that even within away venues there is a huge variation in win rates for teams. This proves the point that pitch &amp; ground conditions play a huge role in deciding match outcomes and should not be ignored while creating the model.</p>
+
+<p><strong>Batting &amp; Bowling Stats</strong>
+<img src="https://lh3.googleusercontent.com/UdKrvn6kOKtsqoglazcRcw03uDn1KLW3Z2dv9VpKRJZuVxCY7R6KHil9UExsjZs8rxu4_OJV-iZLBQhpkRbMo0r2OIQ77MOCwjqA65IrNA3d14O_OOd_jLNU0-wBHWBSv2X0uT1AwUi0m1d5-bxnRt8SxOq-9py1Fnpcb2l8OgmLybIDOinBs5pxo954bkFIKePC5h0Oi1S4YVDvBmGgZs58mPaGMPcRWdj-d3p15BWt-ohma1J3Uqn5qsvM8U45-sAz-LaeutQIeSEKdVAwHIWEnb4aRMmbAb008orOTSRovBH74nY9iDC4tP9bfGlzLFus4Z6q8IXXV4QsPojx6jQQeJYkzKwwlD2b76JGwnwyXvtbDHEhWRz91fVgQ5m92_HtTC_1psc7N_6mD1YGWdVeJCJFoOhpT-hOcAT38izkUQcFPsOJxOIbCUMWHYNEk-6jnAkyP6sKUL3ufTgJNHmcJeETmy0X22iki6-xYza10s3zUW3tuiI81hQFzb4arNIXMIkGRMMdwqb4ftqyNNmLSjTtIKAo4HyabnDz7__1m0apvC03tjzhckj9kqi6i6q3SOxo-E9INyaKsqpQbmm_8nuzKofpEJfFdwNMXjojdmADsFksHGSXZWBuGb0JWez5m_9NkzjpJ_-Cb5eMunSAW3_HiyAEjcyBMUJMUy5cf7fQAG1pmj9Bq-lpj6iXoH-LebSVBGCHbZM6dToaLe0=w947-h830-no?authuser=0" alt="enter image description here" /></p>
+
+<p>The above scatter plot shows us a scatter plot distribution between win rates for teams &amp; their average bowling &amp; batting stats for powerplay &amp; innings. For some of these stats like mean runs scored while batting first have a correlation pattern with win rate, some others like numbers of runs scored during powerplay while batting first don’t show any relationship with the win rates. A study of these scatter plots will help us understand which variables correlate with win rate &amp; will help us in feature selection feature engineering stage of the exercise.</p>
+
+<p><strong>Win Rate Stats</strong>
+We’re looking at multiple win rate stats like head to head records of teams against each other, overall win rates since the beginning of the IPL, total number of wins in the ongoing season. Let’s take a look at one feature - difference in number of wins for the ongoing season.</p>
+
+<p><img src="https://lh3.googleusercontent.com/U4bU7kEKgMKzi-mA-47bM_UArGIboNFQZHnp23CjWqE9JJgC8yZRFDUtQr-IZJoY0-higGKxamC5519oRVN0Nt8KiQ65VuPB4bbEOlqOsuYZ_eB6tZxqm4CuqLD7OXVvTwgD2Sp3vCj0onClSK2RpUCPOV_TACZgARAPqGAO3dobKw8USHL3RTqF3SsRmveXRSVjH5ncn7Pb588e0oxEohbCnT2lhiAGfMj0BW8MpOCJfrj4t8sB2wT1AryYimtRvkXMVj9epHVO-iIcdUk-UEAUKaNBEd7x8iXzMdAY-ISGpd5P62NLqq9U0tmHcdl3Yaurdu3FDVzCql4BeWPjZZr4eAxBfRFLkejtOt4jG_mn6jda8JFCq5w3zI-2Uj7lWVGtMcQKJeE77zWpf1r9ISqydnE3Qp59kQHsQbf5BDdkbMpq_Udt4qIuPBdlsSh7SKhbNII12EZ966kKuvXu9EukX7bTro2WOKKVgnGe5Xp0c9dQjfJgaqcNz-RkPo_W5smd-UtEMzwa3CU8i5wNwEZ-Hi0DsKJrmJyp08V3JvhKNM0eTT0kHQBUvEdhFyxa0EM7Ezyl7OJv5UCBhtclKhWlRu0Yqkg57kt9TfsyKB5NBv97EUtLuuDg5ueX-hA3pAbAG6LyJIH3eJ2XY-cX4rwqvtJi9FsBEEg6ubZ9rhSe1splwSN_MV6cQnZbZ6Sg6VlwLJawp63ChkkiFD5QkIs=w1158-h525-no?authuser=0" alt="enter image description here" /></p>
+
+<p>As we can see above, current form in the season plays an important role in determining match outcomes. Teams that have won a significantly higher number of matches compared to the opposition in the season tend to win more often.</p>
+
+<h2 id="model-design--development">Model Design &amp; Development</h2>
+<p><img src="https://lh3.googleusercontent.com/cFwxuX_gRLq_kNsvulXduGAAFpZQqWWkL1y93gdSwUQcxUx1-A8tjXw7tLu5MKvTgo6SihXU9nEDD1EKFy5DjtoPbBJUdTZYT10rUm6fvmXnS15SvQFLLN5vk_6pcEZTVwdIxcwTHV8AOKQeLdiFSDYWCnZL4Ibl_I6n-2P0pdiyf-S6XN2rSlLA6r_MAeITf1sUckCNo4BdUhWNjf4DJkDrFeCAkGEMuv-lLHRaVMoeGLjVuvjdV9S0YMwJjuSqsjlLj72KNLi19BxjNTfb0qHAFXXSffKNk58HsWQ9AuIHh7lsu6HH3B0WG_oXlbf5wXplqVri61ZnqK7lDfhFSEExksEPAMjkZexsw-w3znbeD4FECK9W0M19WXQdQa7FQX47cvqpvz3TNjhrXXPGQ6AFNxRVHfV77yRVMTm2xgmsoVlU4z_Eavp9Z1Ed3iOtW2pBc_YIY1iQgd4iYYTYGdUvoDvW1NujamHzM01Dyh1t2ejfypLH7Z4YJtIXZa1wQQGMw5r4UkN6pA6U94MIrisFWgqbiANeUMtrWy-tIloaLlR_yNmiq_dHFRCD2vr33U4Ug2m0HBB2HTSLG2O1aQQ1FtcBq7vX-h-SMzSQXvvj5Qa1FZs0iSnwbs4Znhjss2cfq15qojSgSemGmaKJA22_69CSMswDDdcVdZj3rU8uCjUs_K5u0DgYAA0W7gPVlgNIsPFZAhPfLIKN7vdIOEI=w999-h490-no?authuser=0" alt="enter image description here" /></p>
+
+<p>Summarizing the image above -</p>
+<ol>
+  <li>Model development - Happens one per season using training data as data of all the previous seasons</li>
+  <li>Test Data Update - Happens once every week taking into account change in team’s batting &amp; bowling stats as well as current season’s performance. This test data is used to make predictions every week.</li>
+</ol>
+
+<p>The aim of the model is to predict the winning team for every match. We use tree based ensemble Random Forest for making our predictions. After several iterations of model hyperparameter tuning &amp; feature selection, here is the final feature importance plot we got for our model.</p>
+
+<p><img src="https://lh3.googleusercontent.com/XLSqpjjZY80PYmzbCGwR-HYP3dAqD4BH7Gy47BXkNbwBkdLzhC-xazCDzsIECr1jWA-PgLLlQQ8wdz2YIoiZnPrHn4il4RTt9aZKPskEGTPjmMiXvNmwTDPOAD3PJalP-nZw43-Snu9S7iiYYvP5P8uh6Gs7rTpn5GfGl7lZlfgJcS3nvr5MTnTXMR_78Cc5uVoZZZ6zs3PoaTSX-Ewpo7UGIcbdfiSdW9cUidYGwrtHVg3HYYS54vJlPH3fufpv1_OdqaiLB_D8CvXdWYyCcdVRjsxNbPl1iG2AblSjq2S37Kl9V4rsxRFXthgZ2Ok0t2XlHnAw56NdiTjxkQOYTka1VjpVJtIH0X0AotP3inD2rfnriz-4QNnVia23K_J33PhA8bfyKf3vQzNXyKNztjyunmqpEy0E59HpTZL4YkZjlJb0gBjhlCNxY2UHfxTiXz2aNrE-6VdOt3qzBCt0cm8Fq9hfznryiuczK4WI20xg_Z9j9ghm9EG7IEtraX7N3micslrFdEMhNx0YCIuY3Jp-0DX2whqXO5VZewDYtFyXRUomQMu2i5t-ATzqu7OBQASfQqU4t4qBKQwKlBvjkeIQ7oswabY-QByWgurC0dB93TqhaL8BVu2HwryuBTrAi2AF4A9XmH7pj0LrPxqr7itMDynrfQUbd1y4vz98HxgHUZ-hdIHA1rt628PLpCRBBRV2HKLRfYE4dM4ZqGTnc5s=w942-h830-no?authuser=0" alt="enter image description here" /></p>
+
+<p>Current season form is the most important feature, followed by difference in number of mean runs scored along with overall win rates in the IPL. Since we only have about 500 data points, its good to restrict depth of trees &amp; the number of features going into the model to avoid overfitting.</p>
+
+<p>We also tested out the model for different seasons, looking to get an understanding of the average accuracy of the model over multiple seasons. As mentioned above, for making predictions for a season, we train the model with data up until the last season and make predictions on the current season. Using this method the general accuracy of the model lies in the range of 65%-70%, though it fell down to 61% for the 2018 season.</p>
+
+<p>Generally you would expect model to get better with every passing year due to availability of more data, but that isn’t the case with IPL due to the reasons mentioned earlier -complete changes in squads due to mega auctions, tournament shifting to neutral venues etc.</p>
+
+<p><img src="https://lh3.googleusercontent.com/OuR4u9M83eWzDa42VtKYL4WR7yHxmkVDxOcEUQCO9SNwSX3lg-JpeKZ8Qg1k0dcINdBhIy-0AB93kMyjpiYE2BHEQkown4o96d7hUrWzJ13UUvB4Phsi03BarPiXKCO1603A00gw9BIELE745RzcD7Dm1o9Ntu5RNlPq_RGtRtHuyG78xguQWd6CyeiT_QJz73Q_PTA7RmbCugp1b7bD5Qdqb-M3XLscowECp2zeaJG4om-c1zbpckE2Fgh6XZlT2rVOoRDB_NmP5fiI5t-yAZFBrlwKJYIpWvV0E86UExctdXv3g2LAykfoHYNhhNg3EZJXnZ731kOJUUvBBq4un9E9Jeu5ik04lUbKS2aVGGMgFf6obahng2wqBtSWX559yUxZ5gTT1ns_zvvD6C1jaiu-cvrq85bg2Lw2CRhttkgifAuE5Wc4MvjUUOPnWFSbGSTpYk0gU_b4cXlp6xoyShzaWQd7Zgci5MfdrBNHAjuzjSW3GkWBaTdZAPaRc7gJYalpQD1NjB8dMbLtcMRKMXjX5fQObZCw0D7ExJzSwMjjHHZF46h6dmrMj4M-j211800arcw6Mkt8BoMmQX-FoifARojMWlWutzNOLATpwkq9HQ5o0C-XwPCHPxu4_ALg163CbqMayquFIEguK0t-t264P0_z3gSEJahJxFQQ2_b43SEQiRwjxbTDCuTDTM3JgK3DXHynRJdHo55iW6JgVII=w485-h220-no?authuser=0" alt="enter image description here" /></p>
+
+<h2 id="alternative-approaches">Alternative approaches</h2>
+<p>While this model gives us reasonable accuracy, there is still a lot of scope for improvement. We did not consider toss outcomes, match importance for teams, day/night status and squad strength based on players involved in the match during our prediction. Adding these &amp; other features could potentially improve the model accuracy.</p>
+
+<p>While researching for methods to make predictions on sports outcomes, I also came across the <a href="fivethirtyeight.com">fivethirtyeight.com</a> method to create Elo ratings for teams based on squad strength and then run Monte Carlo simulations thousands of times and predict the outcomes of matches &amp; seasons. They’ve used this approach number of times for sports like Football, Basketball, Baseball etc. I’ve found it to be fascinating and will be looking to try that out for upcoming seasons &amp; tournaments as well.</p>
+
+<h2 id="final-comments">Final Comments</h2>
+<p>This was a fun exercise and took me about two weekends to complete the entire process from data gathering, manipulation to model building. The final predictions have been made available on a <a href="https://share.streamlit.io/arpitsolanki/ipl-prediction-engine/main/app.py">Streamlit</a> app. Code is available <a href="https://github.com/arpitsolanki/IPL-Prediction-Engine">here</a></p>
+
+<p>Hope you guys enjoyed reading it. Please feel free to leave your feedback in comments.</p>
+
+<p>PS - Unfortunately the IPL season had to be postponed due to Covid situation in India, but this was a fun project &amp; acted as a good starting point for me to use data for cricket. Will look to build on my work again when normalcy is restored to life &amp; cricket.</p>
+
+
+  </div><a class="u-url" href="/blog/2021/04/15/Building-a-model-to-predict-IPL-match-outcomes.html" hidden></a>
+</article>
+
+<script src="https://utteranc.es/client.js"
+        repo="arpitsolanki/blog"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/arpitsolanki" title="arpitsolanki"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/arpitsolanki14" title="arpitsolanki14"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
