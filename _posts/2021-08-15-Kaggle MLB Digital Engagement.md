@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Kaggle MLB Digital Engagement
+title: Kaggle MLB Digital Engagement Notebook Submission
 subtitle: Notebook submission for the Second task in the Challenge.
 tags: [python, MLB, Plotly]
 ---
